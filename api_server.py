@@ -26,19 +26,16 @@ conversation_store: Dict[str, List[Dict[str, Any]]] = {}
 class UserData(BaseModel):
     """Model for user financial input data."""
     age: str
-    family_members: str
+    familyMembers: str
+    gender: str
     occupation: str
-    total_income: str
-    earners: str
-    dependents: str
-    in_hand_income: str
-    investment_percent: str
-    investment_methods: str
-    dining_out: str
-    shopping_freq: str
-    recurring_expenses: str
-    commute_mode: str
-    time_period: str = "monthly"  # default to monthly, can be changed by user
+    investmentPercentage: float = 0
+    investmentOptions: list | dict
+    familyEarners: str
+    familyDependents: str
+    grossSalary: str
+    expenses: list[dict]  # Each dict: {"name": str, "amount": float}
+    goals: list[dict]     # Each dict: {"name": str, "amount": float, "timeToAchieve": int}
     session_id: Optional[str] = None  # For conversation tracking
     message: Optional[str] = None     # For chat-style input (optional)
 
@@ -65,14 +62,14 @@ def generate_plan(user_data: UserData):
     # Define specialized agents
     expense_analyst = Agent(
         role="Expense Analyst",
-        goal="Analyze and categorize all user expenses into Necessities, Luxuries, and Recurring Obligations with realistic Indian values.",
+        goal="Analyze and categorize all user expenses based on the provided expenses list, family structure, and Indian context.",
         backstory="A detail-oriented analyst with deep knowledge of Indian household spending patterns.",
         llm=llm,
         verbose=False
     )
     investment_advisor = Agent(
         role="Investment Advisor",
-        goal="Recommend optimal investment allocation and methods based on user preferences and Indian market options.",
+        goal="Recommend optimal investment allocation and methods based on user profile, investment options, and Indian market options.",
         backstory="A savvy investment expert who tailors strategies for Indian families.",
         llm=llm,
         verbose=False
@@ -95,20 +92,17 @@ def generate_plan(user_data: UserData):
     # Task 1: Analyze and categorize expenses
     expense_task = Task(
         description=(
-            f"Analyze the following user profile and categorize all monthly expenses into Necessities, Luxuries, and Recurring Obligations. "
+            f"Analyze the following user profile and provided expenses. Categorize all monthly expenses into Necessities, Luxuries, and Recurring Obligations. "
             f"Use realistic Indian cost estimates and provide a table with categories, subcategories, and estimated amounts.\n\n"
             f"User Profile:\n"
             f"- Age: {user_data.age}\n"
+            f"- Gender: {user_data.gender}\n"
             f"- Occupation: {user_data.occupation}\n"
-            f"- Family Members: {user_data.family_members}\n"
-            f"- Earners: {user_data.earners}\n"
-            f"- Dependents: {user_data.dependents}\n"
-            f"- Monthly In-hand Income: ₹{user_data.in_hand_income}\n"
-            f"- Total Family Income: ₹{user_data.total_income}\n"
-            f"- Dining Out Frequency: {user_data.dining_out} times/week\n"
-            f"- Clothes Shopping Frequency: {user_data.shopping_freq} times/month\n"
-            f"- Recurring Expenses: {user_data.recurring_expenses}\n"
-            f"- Commute Mode: {user_data.commute_mode}\n"
+            f"- Family Members: {user_data.familyMembers}\n"
+            f"- Family Earners: {user_data.familyEarners}\n"
+            f"- Family Dependents: {user_data.familyDependents}\n"
+            f"- Gross Salary: ₹{user_data.grossSalary}\n"
+            f"- Expenses: {user_data.expenses}\n"
         ),
         expected_output="A markdown table of categorized expenses with estimated amounts.",
         agent=expense_analyst
@@ -117,7 +111,7 @@ def generate_plan(user_data: UserData):
     # Task 2: Recommend investment allocation
     investment_task = Task(
         description=(
-            f"Based on the user's profile and the expense analysis, recommend how to allocate {user_data.investment_percent}% of income into suitable Indian investment methods: {user_data.investment_methods}. "
+            f"Based on the user's profile, goals, and the expense analysis, recommend how to allocate {user_data.investmentPercentage}% of income into suitable Indian investment options: {user_data.investmentOptions}. "
             f"Provide a table with method, amount, and rationale."
         ),
         expected_output="A markdown table of investment allocation and rationale.",
@@ -140,7 +134,7 @@ def generate_plan(user_data: UserData):
     # Task 4: Suggest lifestyle adjustments
     lifestyle_task = Task(
         description=(
-            f"Based on the full financial plan, suggest lifestyle adjustments to optimize spending and improve quality of life. "
+            f"Based on the full financial plan and user goals: {user_data.goals}, suggest lifestyle adjustments to optimize spending and improve quality of life. "
             f"Be specific and practical for Indian families."
         ),
         expected_output="A bullet list of lifestyle adjustment suggestions.",

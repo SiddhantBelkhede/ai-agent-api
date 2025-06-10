@@ -40,26 +40,30 @@ uvicorn api_server:app --host 0.0.0.0 --port 8000
 ```
 
 ### 4. Test the API
-- Health check: [http://localhost:8000/health](http://localhost:8000/health)
-- Generate plan: POST to `/generate_plan/` with JSON body (see below).
+- Health check: [https://ai-agent-api-xyyh.onrender.com/health](https://ai-agent-api-xyyh.onrender.com/health)
+- Generate plan: POST to [https://ai-agent-api-xyyh.onrender.com/generate_plan/](https://ai-agent-api-xyyh.onrender.com/generate_plan/) with JSON body (see below).
 
 #### Example request (JSON):
 ```json
 {
   "age": "35",
-  "family_members": "4",
+  "familyMembers": "4",
+  "gender": "male",
   "occupation": "Engineer",
-  "total_income": "120000",
-  "earners": "2",
-  "dependents": "2",
-  "in_hand_income": "100000",
-  "investment_percent": "20",
-  "investment_methods": "SIP, PPF, FD",
-  "dining_out": "2",
-  "shopping_freq": "1",
-  "recurring_expenses": "Rent, School Fees",
-  "commute_mode": "Car",
-  "time_period": "monthly",
+  "investmentPercentage": 20,
+  "investmentOptions": ["SIP", "PPF", "FD"],
+  "familyEarners": "2",
+  "familyDependents": "2",
+  "grossSalary": "120000",
+  "expenses": [
+    {"name": "Rent", "amount": 25000},
+    {"name": "School Fees", "amount": 5000},
+    {"name": "Groceries", "amount": 8000}
+  ],
+  "goals": [
+    {"name": "Child's Education", "amount": 1000000, "timeToAchieve": 60},
+    {"name": "Car Purchase", "amount": 500000, "timeToAchieve": 24}
+  ],
   "session_id": null,
   "message": "I want to save more for my child's education."
 }
