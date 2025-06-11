@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from crewai import Agent, Task, Crew, LLM
 from typing import List, Dict, Any, Optional
 import uuid
+import os
 
 app = FastAPI()
 
@@ -57,7 +58,10 @@ def generate_plan(user_data: UserData):
         # Store the structured user data as a message
         conversation_store[session_id].append({"role": "user", "content": user_data.dict()})
 
-    llm = LLM(model="groq/llama3-70b-8192")
+    llm = LLM(
+        model="groq/llama3-70b-8192",
+        api_key=os.environ.get("GROQ_API_KEY")
+    )
 
     # Define specialized agents
     expense_analyst = Agent(
