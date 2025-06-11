@@ -154,8 +154,30 @@ def generate_plan(user_data: UserData):
     )
     try:
         result = crew.kickoff()
-        # Store the AI response in the conversation history
-        conversation_store[session_id].append({"role": "ai", "content": str(result)})
-        return {"success": True, "plan": str(result), "session_id": session_id, "history": conversation_store[session_id]}
+        # Clean up the response for Android app (remove excessive markdown, asterisks, and format for mobile)
+        import re
+        def clean_response(text):
+            # Remove markdown bold/italic (**text**, *text*, __text__, _text_)
+            text = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
+            text = re.sub(r'\*(.*?)\*', r'\1', text)
+            text = re.sub(r'__(.*?)__', r'\1', text)
+            text = re.sub(r'_(.*?)_', r'\1', text)
+            # Remove excessive newlines (max 2)
+            text = re.sub(r'\n{3,}', '\n\n', text)
+            # Optionally, remove markdown tables and convert to plain text
+            lines = text.splitlines()
+            plain_lines = []
+            for line in lines:
+                # Remove markdown table pipes and headers
+                if line.strip().startswith('|'):
+                    continue
+                if re.match(r'^\s*:?[-]+:?\s*$', line):
+                    continue
+                plain_lines.append(line)
+            return '\n'.join(plain_lines).strip()
+
+        cleaned_result = clean_response(str(result))
+        conversation_store[session_id].append({"role": "ai", "content": cleaned_result})
+        return {"success": True, "plan": cleaned_result, "session_id": session_id, "history": conversation_store[session_id]}
     except Exception as e:
         return {"success": False, "error": str(e), "session_id": session_id, "history": conversation_store[session_id]}
