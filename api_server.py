@@ -25,15 +25,15 @@ conversation_store: Dict[str, List[Dict[str, Any]]] = {}
 
 class UserData(BaseModel):
     """Model for user financial input data."""
-    age: str
+    age: str | int
     familyMembers: str
-    gender: str
+    gender: str | int
     occupation: str
     investmentPercentage: float = 0
     investmentOptions: list | dict
-    familyEarners: str
-    familyDependents: str
-    grossSalary: str
+    familyEarners: str | int
+    familyDependents: str | int
+    grossSalary: str | int
     expenses: list[dict]  # Each dict: {"name": str, "amount": float}
     goals: list[dict]     # Each dict: {"name": str, "amount": float, "timeToAchieve": int}
     session_id: Optional[str] = None  # For conversation tracking
