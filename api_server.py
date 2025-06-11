@@ -27,7 +27,7 @@ conversation_store: Dict[str, List[Dict[str, Any]]] = {}
 class UserData(BaseModel):
     """Model for user financial input data."""
     age: str | int
-    familyMembers: str
+    familyMembers: str | int
     gender: str | int
     occupation: str
     investmentPercentage: float = 0
