@@ -45,4 +45,4 @@ def generate_tip(user_data: UserTipData) -> str:
         f"- Goals: {user_data.goals}\n"
         "\nGive a single, actionable tip (1-2 lines) for this user to improve their financial planning."
     )
-    return tip_agent.act(prompt)
+    return tip_agent.run(prompt)
