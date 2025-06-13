@@ -5,6 +5,7 @@ from crewai import Agent, Task, Crew, LLM
 from typing import List, Dict, Any, Optional
 import uuid
 import os
+from tip_agent import UserTipData, generate_tip
 
 app = FastAPI()
 
@@ -181,3 +182,14 @@ def generate_plan(user_data: UserData):
         return {"success": True, "plan": cleaned_result, "session_id": session_id, "history": conversation_store[session_id]}
     except Exception as e:
         return {"success": False, "error": str(e), "session_id": session_id, "history": conversation_store[session_id]}
+
+@app.post("/generate_tip/")
+def generate_tip_endpoint(user_data: UserTipData):
+    """
+    Generate a concise 1-2 line financial tip for the user.
+    """
+    try:
+        tip = generate_tip(user_data)
+        return {"success": True, "tip": tip}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
