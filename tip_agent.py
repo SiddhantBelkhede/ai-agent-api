@@ -45,9 +45,5 @@ def generate_tip(user_data: UserTipData) -> str:
         f"- Goals: {user_data.goals}\n"
         "\nGive a single, actionable tip (1-2 lines) for this user to improve their financial planning."
     )
-    task = Task(
-        description=prompt,
-        expected_output="A single, actionable tip (1-2 lines) for the user to improve their financial planning.",
-        agent=tip_agent
-    )
-    return task.execute()
+    # CrewAI expects a string, not a list of Task objects, for single-agent use
+    return tip_agent.kickoff(prompt)

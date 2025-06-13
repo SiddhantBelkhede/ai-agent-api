@@ -140,9 +140,9 @@ Get a concise, actionable 1-2 line financial tip for the user based on their pro
   ]
 }
 ```
-#### Response:
+**Response:**
 - `success`: true/false
-- `tip`: AI-generated 1-2 line financial tip
+- `tip`: AI-generated 1-2 line financial tip (string only, not an object)
 
 ---
 
