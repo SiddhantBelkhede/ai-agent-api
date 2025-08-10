@@ -159,28 +159,6 @@ Get a concise, actionable 1-2 line financial tip for the user based on their pro
 ### Free Cloud Options
 - [Render](https://render.com/), [Railway](https://railway.app/), [Fly.io](https://fly.io/), [Deta](https://deta.space/), [Vercel](https://vercel.com/) (with serverless support)
 - Add your `.env` secrets (e.g., `GROQ_API_KEY`) in the cloud provider's dashboard.
-- Use `uvicorn` as the web server.
-
-#### Example: Deploy to Render
-1. Push your code to GitHub.
-2. Create a new Web Service on Render, connect your repo.
-3. Set build command: `pip install -r requirements.txt`
-4. Set start command: `uvicorn api_server:app --host 0.0.0.0 --port 10000`
-5. Add your `GROQ_API_KEY` in Render's environment settings.
-
-#### Example: Deploy to Railway
-1. Push your code to GitHub.
-2. Create a new project on Railway, connect your repo.
-3. Railway auto-detects FastAPI. Set start command if needed: `uvicorn api_server:app --host 0.0.0.0 --port $PORT`
-4. Add your `GROQ_API_KEY` in Railway's environment settings.
-
----
-
-## Security & Best Practices
-- **Never commit your `.env` or secrets.**
-- For production, use a persistent database for conversation history.
-- Review and restrict CORS origins as needed.
-- All API keys are loaded from environment variables for security.
 
 ---
 
@@ -193,16 +171,6 @@ tip_agent.py          # Quick tip agent logic
 README.md             # This file
 .env                  # Your secrets (not tracked by git)
 ```
-
----
-
-## Contributing
-Pull requests and suggestions are welcome! Please open an issue for major changes.
-
----
-
-## License
-MIT
 
 ---
 
